@@ -66,15 +66,6 @@ export default function About() {
           <div className="w-32 h-1 bg-yellow-400"></div>
         </div>
 
-        {/* Page Number */}
-        <div className="absolute bottom-6 left-6 text-white text-4xl font-bold z-10">
-          3
-        </div>
-
-        {/* Company Name Bottom Right */}
-        <div className="absolute bottom-6 right-6 text-white text-xs z-10">
-          PT PELITA KENCANA MANDIRI
-        </div>
       </section>
     </div>
   );
