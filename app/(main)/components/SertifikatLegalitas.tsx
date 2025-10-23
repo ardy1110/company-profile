@@ -53,7 +53,7 @@ export default function SertifikasiLegalitas() {
 
         {/* Certificates Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {certificates.map((cert, index) => (
+          {certificates.map((cert) => (
             <div key={cert.id} className="group relative">
               {/* Certificate Card */}
               <div className="bg-white rounded-lg shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-yellow-500/20">
