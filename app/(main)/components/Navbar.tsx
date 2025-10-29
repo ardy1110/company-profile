@@ -1,273 +1,185 @@
 "use client";
-
+import { useState, useEffect } from "react";
 import {
   NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuTrigger,
   NavigationMenuContent,
+  NavigationMenuItem,
   NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { Building2, Users, Briefcase } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import React from "react";
+
+// Komponen ListItem (Tidak ada perubahan di sini)
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          ref={ref}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-yellow-400/10 hover:text-yellow-400 text-white focus:bg-yellow-400/10 focus:text-yellow-400",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-white/70">
+            {children}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  );
+});
+ListItem.displayName = "ListItem";
 
 const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const services = [
-    {
-      title: "Construction",
-      icon: Building2,
-      description: "Building and infrastructure",
-    },
-    {
-      title: "Consultation",
-      icon: Users,
-      description: "Expert advisory services",
-    },
-    { title: "Management", icon: Briefcase, description: "Project management" },
-  ];
-
-  const about = [
-    {
-      title: "Construction",
-      icon: Building2,
-      description: "Building and infrastructure",
-    },
-    {
-      title: "Consultation",
-      icon: Users,
-      description: "Expert advisory services",
-    },
-    { title: "Management", icon: Briefcase, description: "Project management" },
-  ];
   return (
-    <>
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "bg-[#001746]/95 backdrop-blur-lg shadow-lg py-3"
-            : "bg-transparent py-6"
-        } border-b border-white/10`}
-      >
-        <div className="container mx-auto px-6 lg:px-12 flex items-center justify-between">
+    <nav
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-[#001746]/95 backdrop-blur-md shadow-lg"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="relative w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center font-bold text-[#001746] text-xl shadow-lg transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-yellow-400/50">
-              PKM
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center">
+              <span className="text-lg font-bold text-[#001746]">PKM</span>
             </div>
-            <div className="text-white">
-              <div className="text-xs tracking-wider opacity-80 group-hover:opacity-100 transition-opacity">
-                PT. PELITA
+            <div className="hidden md:block">
+              <div className="text-white font-bold text-lg leading-tight">
+                PT. Pelita Kencana Mandiri
               </div>
-              <div className="font-bold text-sm text-yellow-400 group-hover:text-yellow-300 transition-colors">
-                KENCANA MANDIRI
+              <div className="text-yellow-400 text-xs tracking-wider">
+                COMPANY PROFILE
               </div>
             </div>
           </div>
 
-          {/* Desktop Menu */}
+          {/* Navigation Menu */}
+          <NavigationMenu className="hidden lg:flex">
+            <NavigationMenuList className="gap-2">
+              {/* --- PERUBAHAN DI SINI --- */}
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="#home"
+                    className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:text-yellow-400 hover:bg-white/10 text-white")}
+                  >
+                    Home
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              {/* Menu dropdown tidak perlu diubah karena ListItem sudah menggunakan <a>, bukan <Link> */}
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="bg-transparent text-white hover:text-yellow-400 hover:bg-white/10">
+                  Tentang Kami
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[450px] gap-3 p-4 bg-[#001746] border border-yellow-400/20">
+                    <ListItem href="#tentang-kami" title="Tentang Kami">
+                      Profil singkat dan sejarah perusahaan kami.
+                    </ListItem>
+                    <ListItem href="#visi-misi" title="Visi dan Misi">
+                      Tujuan jangka panjang dan komitmen kami.
+                    </ListItem>
+                    <ListItem href="#struktur-organisasi" title="Struktur Organisasi">
+                      Mengenal tim dan struktur di balik kesuksesan kami.
+                    </ListItem>
+                    <ListItem href="#nilai-perusahaan" title="Nilai - Nilai Perusahaan">
+                      Prinsip yang menjadi landasan kerja kami.
+                    </ListItem>
+                    <ListItem href="#sertifikasi-legalitas" title="Sertifikasi & Legalitas">
+                      Pengakuan resmi dan ketaatan hukum perusahaan.
+                    </ListItem>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="bg-transparent text-white hover:text-yellow-400 hover:bg-white/10">
+                  Layanan
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                   <ul className="grid w-[500px] gap-3 p-4 md:grid-cols-2 bg-[#001746] border border-yellow-400/20">
+                    <ListItem href="#layanan-kami" title="Layanan Kami">
+                      Jelajahi berbagai layanan yang kami tawarkan.
+                    </ListItem>
+                    <ListItem href="#lingkungan" title="Komitmen Terhadap Lingkungan">
+                      Upaya kami dalam menjaga kelestarian lingkungan.
+                    </ListItem>
+                    <ListItem href="/project-experience" title="Pengalaman Pekerjaan">
+                      Portofolio proyek yang telah berhasil kami selesaikan.
+                    </ListItem>
+                    <ListItem href="#hse" title="Implementasi HSE">
+                      Prioritas kami pada Kesehatan, Keselamatan, dan Lingkungan Kerja.
+                    </ListItem>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              {/* --- PERUBAHAN DI SINI --- */}
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="#portfolio"
+                    className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:text-yellow-400 hover:bg-white/10 text-white")}
+                  >
+                    Portfolio
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              {/* --- PERUBAHAN DI SINI --- */}
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="#contact"
+                    className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:text-yellow-400 hover:bg-white/10 text-white")}
+                  >
+                    Contact
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+            </NavigationMenuList>
+          </NavigationMenu>
+
+          {/* CTA & Mobile Menu Button (Tidak ada perubahan) */}
           <div className="hidden lg:block">
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <a
-                      href="#home"
-                      className="text-white hover:text-yellow-400 transition-all text-sm font-medium"
-                    >
-                      Home
-                    </a>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-white hover:text-yellow-400 transition-all text-sm font-medium">
-                    Services
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-[#001746]/95 backdrop-blur-lg p-4 border border-white/10 rounded-lg shadow-xl min-w-[300px]">
-                    <ul className="grid gap-2">
-                      {about.map((service, index) => {
-                        const Icon = service.icon;
-                        return (
-                          <li key={index}>
-                            <a
-                              href="#services"
-                              className="flex items-center gap-3 text-white hover:text-yellow-400"
-                            >
-                              <Icon className="w-5 h-5 text-yellow-400" />
-                              <div>
-                                <div className="font-medium text-sm">
-                                  {service.title}
-                                </div>
-                                <p className="text-xs text-white/60 mt-0.5">
-                                  {service.description}
-                                </p>
-                              </div>
-                            </a>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-white hover:text-yellow-400 text-sm font-medium">
-                    Services
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-[#001746]/95 backdrop-blur-lg p-4 border border-white/10 rounded-lg shadow-xl min-w-[300px]">
-                    <ul className="grid gap-2">
-                      {services.map((service, index) => {
-                        const Icon = service.icon;
-                        return (
-                          <li key={index}>
-                            <a
-                              href="#services"
-                              className="flex items-center gap-3 text-white hover:text-yellow-400"
-                            >
-                              <Icon className="w-5 h-5 text-yellow-400" />
-                              <div>
-                                <div className="font-medium text-sm">
-                                  {service.title}
-                                </div>
-                                <p className="text-xs text-white/60 mt-0.5">
-                                  {service.description}
-                                </p>
-                              </div>
-                            </a>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <a
-                      href="#projects"
-                      className="text-white hover:text-yellow-400 text-sm font-medium"
-                    >
-                      Projects
-                    </a>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <a
-                      href="#contact"
-                      className="text-white hover:text-yellow-400 text-sm font-medium"
-                    >
-                      Contact
-                    </a>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-
-          {/* Tombol CTA */}
-          <button className="hidden lg:block bg-yellow-400 hover:bg-yellow-500 text-[#001746] px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 hover:shadow-lg hover:shadow-yellow-400/50 transform hover:scale-105">
-            Get Started
-          </button>
-
-          {/* Tombol Mobile */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-white p-2"
-          >
-            <div className="w-6 h-5 flex flex-col justify-between">
-              <span
-                className={`block h-0.5 w-full bg-white transition-all duration-300 ${
-                  mobileMenuOpen ? "rotate-45 translate-y-2" : ""
-                }`}
-              ></span>
-              <span
-                className={`block h-0.5 w-full bg-white transition-all duration-300 ${
-                  mobileMenuOpen ? "opacity-0" : ""
-                }`}
-              ></span>
-              <span
-                className={`block h-0.5 w-full bg-white transition-all duration-300 ${
-                  mobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
-                }`}
-              ></span>
-            </div>
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <div
-          className={`lg:hidden overflow-hidden transition-all duration-500 ${
-            mobileMenuOpen ? "max-h-[600px] mt-6" : "max-h-0"
-          }`}
-        >
-          <div className="flex flex-col gap-3 pb-4 px-6">
-            <a
-              href="#home"
-              className="text-white hover:text-yellow-400 text-sm font-medium py-2 border-b border-white/10"
-            >
-              Home
-            </a>
-            <div className="border-b border-white/10 pb-3">
-              <div className="text-white/60 text-xs font-medium mb-2 uppercase tracking-wider">
-                About
-              </div>
-              <div className="pl-3 space-y-2">
-                {about.map((service, index) => (
-                  <a
-                    key={index}
-                    href="#services"
-                    className="block text-white hover:text-yellow-400 text-sm py-1"
-                  >
-                    {service.title}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <div className="border-b border-white/10 pb-3">
-              <div className="text-white/60 text-xs font-medium mb-2 uppercase tracking-wider">
-                Services
-              </div>
-              <div className="pl-3 space-y-2">
-                {services.map((service, index) => (
-                  <a
-                    key={index}
-                    href="#services"
-                    className="block text-white hover:text-yellow-400 text-sm py-1"
-                  >
-                    {service.title}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <a
-              href="#projects"
-              className="text-white hover:text-yellow-400 text-sm font-medium py-2 border-b border-white/10"
-            >
-              Projects
-            </a>
-            <a
-              href="#contact"
-              className="text-white hover:text-yellow-400 text-sm font-medium py-2 border-b border-white/10"
-            >
-              Contact
-            </a>
-            <button className="bg-yellow-400 hover:bg-yellow-500 text-[#001746] px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 mt-2">
-              Get Started
+            <button className="bg-yellow-400 hover:bg-yellow-500 text-[#001746] px-6 py-2 rounded-full font-bold transition-all duration-300 hover:shadow-lg hover:shadow-yellow-400/50 transform hover:scale-105">
+              Get Quote
             </button>
           </div>
+          <button className="lg:hidden text-white p-2">
+            <svg className="w-6 h-6" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
         </div>
-      </nav>
-    </>
+      </div>
+    </nav>
   );
 };
 

@@ -1,16 +1,12 @@
-'use client'
+"use client";
 
-import Navbar from "./Navbar"
-
-
+import Navbar from "./Navbar";
 
 const Landing = () => {
-
-
   return (
     <>
       {/* ===== Navbar ===== */}
-      <Navbar/>
+      <Navbar />
       {/* ===== Hero Section ===== */}
       <div className="relative w-full h-screen overflow-hidden">
         {/* Background */}
@@ -23,22 +19,24 @@ const Landing = () => {
 
         {/* Content */}
         <div className="absolute top-[15%] left-[10%] text-white z-10 animate-fadeIn">
-          <div className="relative w-20 h-20 mb-6 animate-float bg-yellow-400 rounded-full flex items-center justify-center">
-            <span className="text-3xl font-bold text-[#001746]">PKM</span>
+          <div className="relative w-16 h-16 mb-6 animate-float bg-yellow-400 rounded-full flex items-center justify-center">
+            <span className="text-2xl font-bold text-[#001746]">PKM</span>
           </div>
-          <div className="text-sm tracking-[0.3em] mb-3 opacity-90">COMPANY PROFILE</div>
-          <h1 className="text-5xl lg:text-6xl font-extrabold leading-tight text-yellow-400 mt-2 animate-slideInLeft">
+          <div className="text-xs tracking-[0.3em] mb-3 opacity-90">
+            COMPANY PROFILE
+          </div>
+          <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight text-yellow-400 mt-2 animate-slideInLeft">
             PT. PELITA <br /> KENCANA <br /> MANDIRI
           </h1>
           <p
-            className="text-white/80 mt-6 max-w-md text-lg leading-relaxed animate-slideInLeft"
-            style={{ animationDelay: '0.2s' }}
+            className="text-white/80 mt-6 max-w-md text-base leading-relaxed animate-slideInLeft"
+            style={{ animationDelay: "0.2s" }}
           >
             Building excellence through innovation and dedication
           </p>
           <div
             className="flex gap-4 mt-8 animate-slideInLeft"
-            style={{ animationDelay: '0.4s' }}
+            style={{ animationDelay: "0.4s" }}
           >
             <button className="bg-yellow-400 hover:bg-yellow-500 text-[#001746] px-8 py-3 rounded-full font-bold transition-all duration-300 hover:shadow-xl hover:shadow-yellow-400/50 transform hover:scale-105">
               Explore More
@@ -50,7 +48,7 @@ const Landing = () => {
         </div>
 
         {/* Tahun */}
-        <div className="absolute bottom-8 right-12 text-3xl font-bold text-[#001746] z-10 animate-pulse">
+        <div className="absolute bottom-8 right-12 text-2xl font-bold text-[#001746] z-10 animate-pulse">
           2024
         </div>
       </div>
@@ -58,8 +56,12 @@ const Landing = () => {
       {/* ===== Animations ===== */}
       <style jsx>{`
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
         @keyframes slideInLeft {
           from {
@@ -72,15 +74,27 @@ const Landing = () => {
           }
         }
         @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
         }
-        .animate-fadeIn { animation: fadeIn 1s ease-out; }
-        .animate-slideInLeft { animation: slideInLeft 0.8s ease-out forwards; opacity: 0; }
-        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-fadeIn {
+          animation: fadeIn 1s ease-out;
+        }
+        .animate-slideInLeft {
+          animation: slideInLeft 0.8s ease-out forwards;
+          opacity: 0;
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
       `}</style>
     </>
-  )
-}
+  );
+};
 
-export default Landing
+export default Landing;

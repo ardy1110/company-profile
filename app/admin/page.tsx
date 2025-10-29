@@ -1,200 +1,486 @@
 'use client'
+
 import React, { useState } from 'react';
-import { FaSitemap, FaProjectDiagram, FaCertificate, FaPlus, FaEdit, FaTrash, FaUpload } from 'react-icons/fa';
+import dynamic from 'next/dynamic'
+ 
+// Gunakan dynamic import dengan ssr: false
+const OrgChartAdmin = dynamic(
+  () => import('@/app/admin/components/OrgEmployed'), // <-- Sesuaikan path ke file OrgChartAdmin Anda
+  { 
+    ssr: false, // <-- Ini adalah kuncinya!
+    loading: () => <p>Loading chart admin...</p> // Opsional: Tampilkan sesuatu saat komponen dimuat
+  }
+)
+import {
+  Menu,
+  X,
+  Users,
+  Award,
+  Briefcase,
+  LayoutDashboard,
+  Plus,
+  Edit,
+  Trash2,
+  Upload,
+  ChevronRight,
+  LogOut,
+  Settings,
+  Bell
+} from 'lucide-react';
 
-// --- DATA DUMMY (Dalam aplikasi nyata, ini dari API) ---
-const initialMembers = [
-  { id: 1, name: 'Budi Santoso', position: 'Direktur Utama', imageUrl: 'https://i.pravatar.cc/150?u=1' },
-  { id: 2, name: 'Citra Lestari', position: 'Manajer Proyek', imageUrl: 'https://i.pravatar.cc/150?u=2' },
-  { id: 3, name: 'Agus Wijaya', position: 'Kepala Pemasaran', imageUrl: 'https://i.pravatar.cc/150?u=3' },
+// TypeScript Interfaces
+
+interface Certificate {
+  id: string;
+  title: string;
+  holder: string;
+  issuer: string;
+  issueDate: string;
+  expiryDate: string;
+  status: 'active' | 'expired' | 'expiring';
+}
+
+interface Project {
+  id: string;
+  name: string;
+  client: string;
+  startDate: string;
+  endDate: string;
+  status: 'planning' | 'ongoing' | 'completed' | 'on-hold';
+  progress: number;
+  budget: number;
+  manager: string;
+}
+
+type MenuItem = 'dashboard' | 'organization' | 'certificates' | 'projects';
+
+
+
+const sampleCertificates: Certificate[] = [
+  { id: '1', title: 'ISO 9001:2015', holder: 'Company', issuer: 'BSI Group', issueDate: '2023-01-15', expiryDate: '2026-01-15', status: 'active' },
+  { id: '2', title: 'K3 Umum', holder: 'Sudarto', issuer: 'Kemnaker', issueDate: '2024-03-20', expiryDate: '2025-03-20', status: 'expiring' },
+  { id: '3', title: 'ISO 14001', holder: 'Company', issuer: 'TUV', issueDate: '2022-06-10', expiryDate: '2024-06-10', status: 'expired' },
 ];
 
-const initialProjects = [
-  { id: 1, title: 'Pembangunan Jembatan Merah Putih', description: 'Proyek strategis nasional di wilayah timur.', date: '2025-12-20' },
-  { id: 2, title: 'Renovasi Gedung Perkantoran Pusat', description: 'Modernisasi fasilitas untuk efisiensi kerja.', date: '2026-06-15' },
+const sampleProjects: Project[] = [
+  { id: '1', name: 'Proyek Infrastruktur Jalan', client: 'Pemda Aceh', startDate: '2024-01-01', endDate: '2024-12-31', status: 'ongoing', progress: 65, budget: 5000000000, manager: 'Indra Lasmana' },
+  { id: '2', name: 'Pembangunan Gedung Kantor', client: 'PT Sejahtera', startDate: '2024-06-01', endDate: '2025-05-31', status: 'ongoing', progress: 30, budget: 3000000000, manager: 'Regita Cahyani' },
+  { id: '3', name: 'Renovasi Sekolah', client: 'Dinas Pendidikan', startDate: '2023-09-01', endDate: '2024-02-28', status: 'completed', progress: 100, budget: 1500000000, manager: 'Abdul Azis' },
 ];
 
-const initialCertificates = [
-  { id: 1, name: 'Sertifikat ISO 9001:2015', imageUrl: 'https://via.placeholder.com/300x200.png?text=ISO+9001' },
-  { id: 2, name: 'Sertifikat K3', imageUrl: 'https://via.placeholder.com/300x200.png?text=Sertifikat+K3' },
-  { id: 3, name: 'Penghargaan Kontraktor Terbaik', imageUrl: 'https://via.placeholder.com/300x200.png?text=Penghargaan' },
-];
-// --- END OF DATA DUMMY ---
-
-
-// --- KOMPONEN UNTUK SETIAP BAGIAN ---
-
-const StrukturOrganisasi = () => {
-  const [members, setMembers] = useState(initialMembers);
-
-  const handleDelete = (id: number) => {
-    if (window.confirm('Yakin ingin menghapus anggota ini?')) {
-      setMembers(members.filter(member => member.id !== id));
-    }
-  };
+// Components
+const Sidebar: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  activeMenu: MenuItem;
+  setActiveMenu: (menu: MenuItem) => void;
+}> = ({ isOpen, onClose, activeMenu, setActiveMenu }) => {
+  const menuItems: { id: MenuItem; label: string; icon: React.ReactElement }[] = [
+    { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
+    { id: 'organization', label: 'Struktur Organisasi', icon: <Users size={20} /> },
+    { id: 'certificates', label: 'Kelola Sertifikat', icon: <Award size={20} /> },
+    { id: 'projects', label: 'Kelola Proyek', icon: <Briefcase size={20} /> },
+  ];
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Kelola Struktur Organisasi</h2>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center">
-          <FaPlus className="mr-2" /> Tambah Anggota
-        </button>
+    <>
+      {/* Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-full bg-slate-900 text-white w-64 z-50
+          transform transition-transform duration-300 ease-in-out
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:translate-x-0 lg:static
+        `}
+      >
+        {/* Header */}
+        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-700">
+          <h1 className="text-xl font-bold text-yellow-400">Admin Panel</h1>
+          <button onClick={onClose} className="lg:hidden">
+            <X size={24} />
+          </button>
+        </div>
+
+        {/* Menu Items */}
+        <nav className="mt-6">
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => {
+                setActiveMenu(item.id);
+                onClose();
+              }}
+              className={`
+                w-full flex items-center gap-3 px-6 py-3 transition-colors
+                ${activeMenu === item.id
+                  ? 'bg-yellow-400 text-slate-900 font-semibold'
+                  : 'text-gray-300 hover:bg-slate-800'
+                }
+              `}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        {/* Footer */}
+        <div className="absolute bottom-0 w-full border-t border-slate-700">
+          <button className="w-full flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-slate-800 transition-colors">
+            <Settings size={20} />
+            <span>Pengaturan</span>
+          </button>
+          <button className="w-full flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-slate-800 transition-colors">
+            <LogOut size={20} />
+            <span>Keluar</span>
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+};
+
+const DashboardView: React.FC = () => {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 text-sm">Total Karyawan</p>
+              <h3 className="text-3xl font-bold text-gray-800 mt-2">42</h3>
+            </div>
+            <div className="bg-blue-100 p-3 rounded-lg">
+              <Users className="text-blue-600" size={24} />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 text-sm">Sertifikat Aktif</p>
+              <h3 className="text-3xl font-bold text-gray-800 mt-2">18</h3>
+            </div>
+            <div className="bg-green-100 p-3 rounded-lg">
+              <Award className="text-green-600" size={24} />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 text-sm">Proyek Berjalan</p>
+              <h3 className="text-3xl font-bold text-gray-800 mt-2">7</h3>
+            </div>
+            <div className="bg-purple-100 p-3 rounded-lg">
+              <Briefcase className="text-purple-600" size={24} />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 text-sm">Sertifikat Kadaluarsa</p>
+              <h3 className="text-3xl font-bold text-red-600 mt-2">3</h3>
+            </div>
+            <div className="bg-red-100 p-3 rounded-lg">
+              <Bell className="text-red-600" size={24} />
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b">
-              <th className="p-4">Foto</th>
-              <th className="p-4">Nama</th>
-              <th className="p-4">Jabatan</th>
-              <th className="p-4 text-center">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {members.map(member => (
-              <tr key={member.id} className="border-b hover:bg-gray-50">
-                <td className="p-4">
-                  <img src={member.imageUrl} alt={member.name} className="w-16 h-16 rounded-full object-cover" />
-                </td>
-                <td className="p-4 font-medium">{member.name}</td>
-                <td className="p-4 text-gray-600">{member.position}</td>
-                <td className="p-4 flex justify-center items-center space-x-2 h-24">
-                  <button className="text-blue-500 hover:text-blue-700 p-2"><FaEdit size={20} /></button>
-                  <button onClick={() => handleDelete(member.id)} className="text-red-500 hover:text-red-700 p-2"><FaTrash size={20} /></button>
-                </td>
-              </tr>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold mb-4">Proyek Terbaru</h3>
+          <div className="space-y-3">
+            {sampleProjects.slice(0, 3).map((project) => (
+              <div key={project.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                <div>
+                  <p className="font-medium text-gray-800">{project.name}</p>
+                  <p className="text-sm text-gray-500">{project.client}</p>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  project.status === 'completed' ? 'bg-green-100 text-green-700' :
+                  project.status === 'ongoing' ? 'bg-blue-100 text-blue-700' :
+                  'bg-gray-100 text-gray-700'
+                }`}>
+                  {project.status}
+                </span>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold mb-4">Sertifikat Akan Kadaluarsa</h3>
+          <div className="space-y-3">
+            {sampleCertificates.filter(c => c.status === 'expiring' || c.status === 'expired').map((cert) => (
+              <div key={cert.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                <div>
+                  <p className="font-medium text-gray-800">{cert.title}</p>
+                  <p className="text-sm text-gray-500">{cert.holder}</p>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  cert.status === 'expired' ? 'bg-red-100 text-red-700' :
+                  'bg-yellow-100 text-yellow-700'
+                }`}>
+                  {cert.expiryDate}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-const KelolaProyek = () => {
-    const [projects, setProjects] = useState(initialProjects);
+const OrganizationView: React.FC = () => {
 
-    const handleDelete = (id: number) => {
-        if (window.confirm('Yakin ingin menghapus proyek ini?')) {
-            setProjects(projects.filter(p => p.id !== id));
-        }
-    }
 
-    return (
-        <div>
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Kelola Kegiatan & Proyek</h2>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center">
-                    <FaPlus className="mr-2" /> Tambah Proyek
-                </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {projects.map(project => (
-                    <div key={project.id} className="bg-white rounded-lg shadow-md flex flex-col justify-between">
-                        <div className="p-6">
-                            <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                            <p className="text-gray-600 mb-4">{project.description}</p>
-                            <span className="text-sm text-gray-500">Tanggal: {project.date}</span>
-                        </div>
-                        <div className="bg-gray-50 px-6 py-3 flex justify-end space-x-2">
-                            <button className="text-blue-500 hover:text-blue-700 p-2"><FaEdit size={18} /></button>
-                            <button onClick={() => handleDelete(project.id)} className="text-red-500 hover:text-red-700 p-2"><FaTrash size={18} /></button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-const KelolaSertifikat = () => {
-    const [certificates, setCertificates] = useState(initialCertificates);
-
-    const handleDelete = (id: number) => {
-        if (window.confirm('Yakin ingin menghapus sertifikat ini?')) {
-            setCertificates(certificates.filter(cert => cert.id !== id));
-        }
-    }
-
-    return (
-        <div>
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Kelola Foto Sertifikat</h2>
-                <label htmlFor="upload-sertifikat" className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center">
-                    <FaUpload className="mr-2" /> Upload Baru
-                </label>
-                <input id="upload-sertifikat" type="file" className="hidden" />
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {certificates.map(cert => (
-                    <div key={cert.id} className="relative bg-white rounded-lg shadow-md group">
-                        <img src={cert.imageUrl} alt={cert.name} className="w-full h-48 object-cover rounded-t-lg" />
-                        <div className="p-4">
-                            <h3 className="font-bold truncate">{cert.name}</h3>
-                        </div>
-                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onClick={() => handleDelete(cert.id)} className="bg-red-600 text-white p-2 rounded-full shadow-lg"><FaTrash /></button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
+  return (
+    <div className="space-y-6">
+      <OrgChartAdmin/>
+    </div>
+  );
 };
 
+const CertificatesView: React.FC = () => {
+  const [certificates, setCertificates] = useState<Certificate[]>(sampleCertificates);
 
-// --- KOMPONEN UTAMA HALAMAN ADMIN ---
+  const getStatusBadge = (status: Certificate['status']) => {
+    const styles = {
+      active: 'bg-green-100 text-green-700',
+      expiring: 'bg-yellow-100 text-yellow-700',
+      expired: 'bg-red-100 text-red-700',
+    };
+    const labels = {
+      active: 'Aktif',
+      expiring: 'Akan Kadaluarsa',
+      expired: 'Kadaluarsa',
+    };
+    return (
+      <span className={`px-3 py-1 rounded-full text-xs font-medium ${styles[status]}`}>
+        {labels[status]}
+      </span>
+    );
+  };
 
-const AdminPage = () => {
-  const [activeMenu, setActiveMenu] = useState('struktur'); // 'struktur', 'proyek', atau 'sertifikat'
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">Manajemen Sertifikat</h2>
+        <div className="flex gap-2">
+          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+            <Upload size={20} />
+            Import
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-slate-900 rounded-lg hover:bg-yellow-500 font-medium">
+            <Plus size={20} />
+            Tambah Sertifikat
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {certificates.map((cert) => (
+          <div key={cert.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+            <div className="flex items-start justify-between mb-4">
+              <div className="bg-yellow-100 p-3 rounded-lg">
+                <Award className="text-yellow-600" size={24} />
+              </div>
+              {getStatusBadge(cert.status)}
+            </div>
+            <h3 className="font-bold text-lg text-gray-800 mb-2">{cert.title}</h3>
+            <div className="space-y-2 text-sm text-gray-600">
+              <p><span className="font-medium">Pemegang:</span> {cert.holder}</p>
+              <p><span className="font-medium">Penerbit:</span> {cert.issuer}</p>
+              <p><span className="font-medium">Terbit:</span> {cert.issueDate}</p>
+              <p><span className="font-medium">Kadaluarsa:</span> {cert.expiryDate}</p>
+            </div>
+            <div className="flex gap-2 mt-4 pt-4 border-t">
+              <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100">
+                <Edit size={16} />
+                Edit
+              </button>
+              <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100">
+                <Trash2 size={16} />
+                Hapus
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const ProjectsView: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>(sampleProjects);
+
+  const getStatusColor = (status: Project['status']) => {
+    const colors = {
+      planning: 'bg-gray-100 text-gray-700',
+      ongoing: 'bg-blue-100 text-blue-700',
+      completed: 'bg-green-100 text-green-700',
+      'on-hold': 'bg-red-100 text-red-700',
+    };
+    return colors[status];
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">Manajemen Proyek</h2>
+        <button className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-slate-900 rounded-lg hover:bg-yellow-500 font-medium">
+          <Plus size={20} />
+          Tambah Proyek
+        </button>
+      </div>
+
+      <div className="space-y-4">
+        {projects.map((project) => (
+          <div key={project.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h3 className="font-bold text-lg text-gray-800">{project.name}</h3>
+                <p className="text-gray-600 text-sm mt-1">{project.client}</p>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+                {project.status}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+              <div>
+                <p className="text-xs text-gray-500">Project Manager</p>
+                <p className="font-medium text-gray-800">{project.manager}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Budget</p>
+                <p className="font-medium text-gray-800">{formatCurrency(project.budget)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Mulai</p>
+                <p className="font-medium text-gray-800">{project.startDate}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Selesai</p>
+                <p className="font-medium text-gray-800">{project.endDate}</p>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-600">Progress</span>
+                <span className="text-sm font-bold text-gray-800">{project.progress}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-yellow-400 h-2 rounded-full transition-all"
+                  style={{ width: `${project.progress}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 mt-4 pt-4 border-t">
+              <button className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-sm font-medium">
+                <ChevronRight size={16} />
+                Detail
+              </button>
+              <button className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-600 rounded hover:bg-gray-100 text-sm">
+                <Edit size={16} />
+                Edit
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Main Component
+export default function AdminDashboard(): React.ReactElement {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<MenuItem>('dashboard');
 
   const renderContent = () => {
     switch (activeMenu) {
-      case 'struktur':
-        return <StrukturOrganisasi />;
-      case 'proyek':
-        return <KelolaProyek />;
-      case 'sertifikat':
-        return <KelolaSertifikat />;
+      case 'dashboard':
+        return <DashboardView />;
+      case 'organization':
+        return <OrganizationView />;
+      case 'certificates':
+        return <CertificatesView />;
+      case 'projects':
+        return <ProjectsView />;
       default:
-        return <StrukturOrganisasi />;
+        return <DashboardView />;
     }
   };
 
-  const getButtonClass = (menuName: string) => {
-    return activeMenu === menuName
-      ? 'flex items-center p-3 text-base font-bold text-white bg-blue-700 rounded-lg w-full'
-      : 'flex items-center p-3 text-base font-bold text-gray-900 rounded-lg hover:bg-gray-100 w-full';
-  };
-
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-lg p-4">
-        <h1 className="text-2xl font-bold text-center mb-8">Admin Panel</h1>
-        <nav className="space-y-3">
-          <button onClick={() => setActiveMenu('struktur')} className={getButtonClass('struktur')}>
-            <FaSitemap />
-            <span className="ml-3">Struktur Organisasi</span>
-          </button>
-          <button onClick={() => setActiveMenu('proyek')} className={getButtonClass('proyek')}>
-            <FaProjectDiagram />
-            <span className="ml-3">Kegiatan & Proyek</span>
-          </button>
-          <button onClick={() => setActiveMenu('sertifikat')} className={getButtonClass('sertifikat')}>
-            <FaCertificate />
-            <span className="ml-3">Sertifikat</span>
-          </button>
-        </nav>
-      </aside>
+    <div className="flex h-screen bg-gray-100">
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+      />
 
-      {/* Main Content */}
-      <main className="flex-1 p-8">
-        {renderContent()}
-      </main>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white shadow-sm h-16 flex items-center justify-between px-6">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden text-gray-600 hover:text-gray-900"
+          >
+            <Menu size={24} />
+          </button>
+
+          <div className="flex items-center gap-4 ml-auto">
+            <button className="relative p-2 text-gray-600 hover:text-gray-900">
+              <Bell size={20} />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-800">Admin User</p>
+                <p className="text-xs text-gray-500">Administrator</p>
+              </div>
+              <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center font-bold text-slate-900">
+                A
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto p-6">
+          {renderContent()}
+        </main>
+      </div>
     </div>
   );
-};
-
-export default AdminPage;
+}
