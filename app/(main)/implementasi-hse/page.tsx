@@ -1,5 +1,4 @@
 'use client'
-import bgImage from '../../public/workers.jpg'
 
 
 const HSEImplementation = () => {
@@ -9,7 +8,7 @@ const HSEImplementation = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
         style={{
-          backgroundImage: `url(${bgImage})`
+          backgroundImage: `url('/workers.jpg')`
         }}
       ></div>
       {/* Background Overlay */}
@@ -78,9 +77,6 @@ const HSEImplementation = () => {
             </ul>
           </div>
         </div>
-
-        {/* Page Number */}
-        <div className="text-right text-6xl font-bold text-white/10 mb-16">14</div>
 
         {/* Section 2: TUGAS & TANGGUNG JAWAB HSE */}
         <div className="mb-16">

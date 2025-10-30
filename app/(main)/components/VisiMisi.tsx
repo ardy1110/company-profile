@@ -1,69 +1,95 @@
 import React from 'react';
+import { FaEye, FaRocket, FaHandsHelping, FaLightbulb } from 'react-icons/fa'; // Import ikon
 
 export default function VisiMisi() {
+  // Warna Primer: #001746 (Biru Tua/Navy)
+  // Warna Aksen: yellow-500 (Emas/Kuning)
+
   return (
-    <div className="relative min-h-screen bg-slate-900 overflow-hidden">
-      {/* Background Image with Overlay */}
+    <div id='visi-misi' className="scroll-mt-24 relative min-h-screen bg-[#001746] overflow-hidden flex items-center">
+      
+      {/* Background Image with Darker Overlay for Contrast */}
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600')`,
+          // Menggunakan warna primer perusahaan pada gradien untuk integrasi yang lebih baik
+          backgroundImage: `linear-gradient(rgba(0, 23, 70, 0.95), rgba(0, 23, 70, 0.95)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1600&auto=format&fit=crop')`,
+          backgroundAttachment: 'fixed', // Efek Parallax (Opsional, tapi keren)
         }}
       />
       
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 py-20 max-w-4xl">
-        {/* Header */}
-        <div className="mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            VISI
+      {/* Content Container */}
+      <div className="relative z-10 mx-auto px-6 lg:px-8 py-20 w-full max-w-7xl">
+        
+        {/* Header - Berpusat dan Berdampak */}
+        <div className="text-center mb-16">
+          <p className="text-lg font-bold text-yellow-500 tracking-widest uppercase mb-3">
+                Landasan Perusahaan
+          </p>
+          <h1 className="text-6xl md:text-7xl font-extrabold tracking-tighter leading-tight">
+            <span className="text-white">VISI</span>
+            <span className="text-yellow-500"> & </span>
+            <span className="text-white">MISI</span>
           </h1>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            <span className="text-yellow-500">&</span>
-            <span className="text-white"> MISI</span>
-          </h1>
-          <div className="w-24 h-1 bg-yellow-500"></div>
-        </div>
-
-        {/* Introduction Text */}
-        <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-12 max-w-2xl">
-          Dalam menghadapi perkembangan dan persaingan usaha dimasa ini, PT Pelita 
-          Kencana Mandiri mempunyai visi dan misi yang sangat relevan dengan hakikat 
-          pendirian Perusahaan tersebut.
-        </p>
-
-        {/* Visi Section */}
-        <div className="mb-10">
-          <div className="flex items-center mb-4">
-            <h2 className="text-yellow-500 text-2xl font-bold mr-4">VISI</h2>
-            <div className="flex-1 h-px bg-gradient-to-r from-yellow-500 to-transparent"></div>
-          </div>
-          <p className="text-gray-300 text-sm md:text-base leading-relaxed">
-            Menjadi perusahaan konstruksi terkemuka, yang memberi kepuasan kepada 
-            pelanggan baik pemerintah maupun swasta dan bersinergi untuk menjadikan 
-            Indonesia terang.
+          <p className="text-gray-300 mt-6 max-w-2xl mx-auto leading-relaxed">
+            Dalam menghadapi perkembangan dan persaingan usaha di masa ini, PT Pelita Kencana Mandiri mempunyai visi dan misi yang sangat relevan dengan hakikat pendirian Perusahaan, berfokus pada kualitas dan keberlanjutan.
           </p>
         </div>
 
-        {/* Misi Section */}
-        <div>
-          <div className="flex items-center mb-4">
-            <h2 className="text-yellow-500 text-2xl font-bold mr-4">MISI</h2>
-            <div className="flex-1 h-px bg-gradient-to-r from-yellow-500 to-transparent"></div>
+        {/* VISI & MISI CONTAINER - Dua Kolom Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          
+          {/* VISI CARD */}
+          <div className="bg-white/5 backdrop-blur-sm p-8 md:p-10 rounded-xl shadow-2xl border-t-4 border-yellow-500 hover:shadow-yellow-500/30 transition duration-500">
+            <div className="flex items-center mb-6">
+              <FaEye className="text-4xl text-yellow-500 mr-4 flex-shrink-0" />
+              <h2 className="text-4xl font-extrabold text-yellow-500 tracking-wide">VISI</h2>
+            </div>
+            
+            <p className="text-gray-200 text-lg leading-relaxed border-l-4 border-gray-400 pl-4 py-2 italic font-light">
+              Menjadi perusahaan konstruksi terkemuka, yang memberi kepuasan kepada pelanggan baik pemerintah maupun swasta dan bersinergi untuk menjadikan Indonesia terang.
+            </p>
+            
+            <div className="mt-8 space-y-3">
+                <div className="flex items-center text-yellow-500 space-x-2">
+                    <FaRocket className='text-xl' />
+                    <span className='text-white text-sm font-semibold'>Terkemuka & Bersinergi</span>
+                </div>
+            </div>
           </div>
-          <p className="text-gray-300 text-sm md:text-base leading-relaxed">
-            Menjalin hubungan dengan pelayanan yang berkualitas. Meningkatkan 
-            kesejahteraan karyawan dan memberikan peluang sebesar besarnya kepada 
-            karyawan untuk melakukan inovasi yang dapat menyokong kredibilitas perusahaan 
-            dimata user. Menciptakan hubungan kerja yang baik dan kuat antara perusahaan 
-            dan mitra kerja.
-          </p>
+
+          {/* MISI CARD */}
+          <div className="bg-white/5 backdrop-blur-sm p-8 md:p-10 rounded-xl shadow-2xl border-t-4 border-yellow-500 hover:shadow-yellow-500/30 transition duration-500">
+            <div className="flex items-center mb-6">
+              <FaHandsHelping className="text-4xl text-yellow-500 mr-4 flex-shrink-0" />
+              <h2 className="text-4xl font-extrabold text-yellow-500 tracking-wide">MISI</h2>
+            </div>
+            
+            <ul className="space-y-4 text-gray-200 text-lg leading-relaxed">
+              <li className="flex items-start">
+                  <span className="text-yellow-500 text-xl mr-3 mt-1 flex-shrink-0">•</span>
+                  <span>Menjalin hubungan dengan pelayanan yang berkualitas.</span>
+              </li>
+              <li className="flex items-start">
+                  <span className="text-yellow-500 text-xl mr-3 mt-1 flex-shrink-0">•</span>
+                  <span>Meningkatkan kesejahteraan karyawan dan memberikan peluang inovasi.</span>
+              </li>
+              <li className="flex items-start">
+                  <span className="text-yellow-500 text-xl mr-3 mt-1 flex-shrink-0">•</span>
+                  <span>Menciptakan hubungan kerja yang baik dan kuat antara perusahaan dan mitra kerja.</span>
+              </li>
+            </ul>
+            
+            <div className="mt-8 space-y-3">
+                <div className="flex items-center text-yellow-500 space-x-2">
+                    <FaLightbulb className='text-xl' />
+                    <span className='text-white text-sm font-semibold'>Fokus pada Kualitas & Inovasi Karyawan</span>
+                </div>
+            </div>
+          </div>
+
         </div>
       </div>
-
-      {/* Decorative Lines */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-30"></div>
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-30"></div>
     </div>
   );
 }

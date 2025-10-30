@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { getCertificates } from "@/lib/certificateActions"; 
-import { Loader2 } from "lucide-react";
+import { Loader2, Zap } from "lucide-react"; // Menambah ikon Zap untuk penekanan
 
 interface Certificate {
   id: string;
@@ -26,11 +26,14 @@ export default function SertifikasiLegalitas() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Simulasi pemanggilan API (gunakan kode asli Anda)
     const fetchCertificates = async () => {
       try {
         const res = await getCertificates() as CertificateApiResponse;
         if (res.success && res.data) {
-          setCertificates(res.data);
+          // Sortir berdasarkan 'order' jika ada, atau pastikan data terurut
+          const sortedData = res.data.sort((a, b) => a.order - b.order);
+          setCertificates(sortedData);
         }
       } catch (error) {
         console.error("Error fetching certificates:", error);
@@ -39,102 +42,113 @@ export default function SertifikasiLegalitas() {
       }
     };
     fetchCertificates();
+    
+    // --- Data Dummy untuk Preview Desain jika API tidak tersedia ---
+    // setLoading(false);
+    // setCertificates([
+    //   { id: '1', title: 'ISO 9001:2015', imageUrl: 'https://via.placeholder.com/300x400/001746/FFFFFF?text=Sertifikat+1', altText: 'Sertifikat ISO 9001', order: 1, createdAt: new Date(), updatedAt: new Date() },
+    //   { id: '2', title: 'OHSAS 18001', imageUrl: 'https://via.placeholder.com/300x400/001746/FFFFFF?text=Sertifikat+2', altText: 'Sertifikat OHSAS', order: 2, createdAt: new Date(), updatedAt: new Date() },
+    //   { id: '3', title: 'SBU Konstruksi', imageUrl: 'https://via.placeholder.com/300x400/001746/FFFFFF?text=Sertifikat+3', altText: 'Sertifikat SBU', order: 3, createdAt: new Date(), updatedAt: new Date() },
+    //   { id: '4', title: 'SIUP/NIB', imageUrl: 'https://via.placeholder.com/300x400/001746/FFFFFF?text=Legalitas+4', altText: 'Legalitas SIUP', order: 4, createdAt: new Date(), updatedAt: new Date() },
+    //   { id: '5', title: 'TDP/NIB', imageUrl: 'https://via.placeholder.com/300x400/001746/FFFFFF?text=Legalitas+5', altText: 'Legalitas TDP', order: 5, createdAt: new Date(), updatedAt: new Date() },
+    // ]);
+    // -----------------------------------------------------------------
+
   }, []);
+
+  // Warna Primer: #001746 (Biru Tua/Navy)
+  // Warna Aksen: yellow-500 (Emas/Kuning)
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900">
-        <Loader2 className="w-12 h-12 animate-spin text-yellow-500 mb-4" />
-        <p className="text-gray-400">Memuat sertifikat...</p>
+      <div id="sertifikasi-legalitas" className="scroll-mt-24 min-h-[50vh] flex flex-col items-center justify-center bg-[#001746]">
+        <Loader2 className="w-10 h-10 animate-spin text-yellow-500 mb-4" />
+        <p className="text-gray-300">Memuat data sertifikasi...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-800 relative overflow-hidden">
-      {/* Background Pattern */}
+    <div id="sertifikasi-legalitas" className="scroll-mt-24 bg-[#001746] relative overflow-hidden py-20 lg:py-28">
+      
+      {/* Decorative Pattern - Disesuaikan dengan warna perusahaan */}
       <div className="absolute inset-0 opacity-5">
         <div
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.03) 35px, rgba(255,255,255,.03) 70px)",
+              "repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,.05) 40px, rgba(255,255,255,.05) 80px)",
           }}
         />
       </div>
 
-      <div className="relative z-10 container mx-auto px-6 py-16">
-        {/* Header Section */}
+      <div className="relative z-10 mx-auto px-6 lg:px-8 max-w-7xl">
+        
+        {/* Header Section - Konsisten dengan desain sebelumnya */}
         <div className="mb-16">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2">
-            SERTIFIKASI
+          <p className="text-lg font-bold text-yellow-500 tracking-widest uppercase mb-3">
+                Jaminan Kredibilitas
+          </p>
+          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tighter leading-tight">
+            <span className="text-white">SERTIFIKASI</span>
+            <span className="text-yellow-500"> & </span>
+            <span className="text-white">LEGALITAS</span>
           </h1>
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
-            <span className="text-yellow-500">&</span>
-            <span className="text-white"> LEGALITAS</span>
-          </h1>
-          <div className="w-24 h-1 bg-yellow-500 mb-8"></div>
-
-          <p className="text-gray-300 text-sm md:text-base leading-relaxed max-w-3xl">
-            Kami berkomitmen untuk memenuhi standar tertinggi dalam legalitas
-            dan kualitas. Berikut adalah bukti sertifikasi dan legalitas yang
-            memperkuat kepercayaan Anda terhadap layanan dan produk kami.
+          <p className="text-gray-300 mt-6 max-w-3xl leading-relaxed text-base">
+            Kami berkomitmen untuk memenuhi standar tertinggi dalam legalitas dan kualitas. Berikut adalah bukti sertifikasi dan legalitas yang memperkuat kepercayaan Anda terhadap layanan dan produk kami.
           </p>
         </div>
 
-        {/* Certificates Grid */}
+        {/* Certificates Section */}
         {certificates.length === 0 ? (
           <div className="text-center py-16">
-            <div className="inline-flex flex-col items-center gap-4 bg-slate-700/50 backdrop-blur-sm rounded-xl p-8 border border-slate-600">
-              <div className="w-20 h-20 rounded-full bg-slate-600/50 flex items-center justify-center">
-                <svg className="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <p className="text-gray-400 text-lg">Belum ada data sertifikat.</p>
+            <div className="inline-flex flex-col items-center gap-4 bg-white/5 backdrop-blur-sm rounded-xl p-10 border border-yellow-500/20">
+              <Zap className="w-10 h-10 text-yellow-500" />
+              <p className="text-gray-300 text-lg">Data sertifikat legalitas sedang disiapkan.</p>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          /* KUNCI DESAIN: Horizontal Scroll Container */
+          <div className="flex overflow-x-auto snap-x snap-mandatory pb-8 space-x-6 md:space-x-8 lg:space-x-10 -mx-6 md:-mx-8 lg:-mx-10 px-6 md:px-8 lg:px-10 scrollbar-hide"> 
             {certificates.map((cert) => (
-              <div key={cert.id} className="group relative">
+              /* Lebar Kartu dibuat tetap, agar bisa digeser */
+              <div key={cert.id} className="snap-start flex-shrink-0 w-72 md:w-80 lg:w-96 group relative pt-6">
+                
+                {/* Label - Dipindah ke atas card agar tidak tertutup */}
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
+                  <div className="bg-yellow-500 text-[#001746] font-extrabold text-sm md:text-base px-6 py-2 rounded-full shadow-xl transform hover:scale-105 transition duration-300 whitespace-nowrap">
+                    {cert.title}
+                  </div>
+                </div>
+
                 {/* Certificate Card */}
-                <div className="bg-white rounded-lg shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-yellow-500/20">
+                <div className="bg-white rounded-lg shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-[1.03] hover:shadow-yellow-500/30 border border-white/10">
                   <div className="aspect-[3/4] relative bg-gray-100">
                     <Image
                       src={cert.imageUrl}
                       alt={cert.altText}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-opacity duration-500 group-hover:opacity-90"
                       unoptimized
                     />
                     {/* Overlay on hover */}
-                    <div className="absolute inset-0 bg-slate-900/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <span className="text-white text-lg font-semibold">
-                        Lihat Detail
+                    <div className="absolute inset-0 bg-yellow-500/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center cursor-pointer">
+                      <span className="text-[#001746] text-xl font-extrabold tracking-wide">
+                        LIHAT DETAIL
                       </span>
                     </div>
                   </div>
                 </div>
-
-                {/* Label */}
-                <div className="absolute -top-4 -right-4 z-20">
-                  <div className="bg-yellow-500 text-slate-900 font-bold text-xs md:text-sm px-4 py-2 rounded shadow-lg transform rotate-3">
-                    {cert.title}
-                  </div>
-                </div>
-
-                {/* Border decoration */}
-                <div className="absolute -inset-1 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300 -z-10"></div>
               </div>
             ))}
+            {/* Element kosong untuk memastikan item terakhir bisa digeser dengan baik */}
+            <div className="flex-shrink-0 w-10"></div>
           </div>
         )}
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/5 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl opacity-50"></div>
     </div>
   );
 }
