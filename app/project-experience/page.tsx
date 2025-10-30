@@ -1,14 +1,14 @@
 'use client'
+import { getProjects } from '@/lib/projectActions'
 import { useState, useEffect } from 'react'
 
-// Types
+// Types (Sesuaikan dengan model Prisma)
 interface Project {
-  id: number
+  id: string // Ganti ke string untuk uuid
   name: string
   field: string
   client: string
   year: number
-  category: string
 }
 
 interface GroupedProjects {
@@ -28,123 +28,28 @@ const PengalamanPekerjaan = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true)
+      setError(null) // Hapus error sebelumnya
       
-      // Simulasi delay network
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // HAPUS: Simulasi delay
+      // await new Promise(resolve => setTimeout(resolve, 1000))
       
-      // Data dummy - Ganti dengan fetch ke backend nanti
-      const dummyData = [
-        // 2016
-        {
-          id: 1,
-          name: "Pengadaan dan Pemasangan Genset 100 KVA",
-          field: "Pembangkit / Tenaga Diesel",
-          client: "PT PLN (Persero) P3BS UPT Pemasang Sunter",
-          year: 2016
-        },
-        {
-          id: 2,
-          name: "Pengadaan dan Pemasangan Genset 100 KVA",
-          field: "Pembangkit / Tenaga Diesel",
-          client: "PT PLN (Persero) P3BS UPT Pemasang Sunter",
-          year: 2016
-        },
-        // 2017
-        {
-          id: 3,
-          name: "Pengadaan dan Pemasangan Disturbance Fault Recorder (DFR)",
-          field: "Transmisi / Gardu Induk",
-          client: "PT PLN (Persero) Unit Induk Sektor Kep. Riau",
-          year: 2017
-        },
-        {
-          id: 4,
-          name: "Pengadaan Peralatan Kerja GI dan Transmisi Sistem Jaringan Tenaga",
-          field: "Transmisi / Gardu Induk",
-          client: "PT PLN (Persero) Unit Induk Sektor Kep. Riau",
-          year: 2017
-        },
-        {
-          id: 5,
-          name: "Pembangunan Pembangkit Listrik Tenaga Surya (PLTS) Terapung 20 KWP",
-          field: "Pembangkit / Energi Baru Terbarukan",
-          client: "Dinas ESDM Provinsi Kalbar",
-          year: 2017
-        },
-        {
-          id: 6,
-          name: "Pengadaan dan Pemasangan Trafo PS di Sektor Kep Riau",
-          field: "Distribusi / Jaringan Tegangan Menengah",
-          client: "PT PLN (Persero) UPDL",
-          year: 2017
-        },
-        {
-          id: 7,
-          name: "Pekerjaan Pemeliharaan Rectifier No. 1 VDC UPT Pemasang Sunter",
-          field: "Transmisi / Gardu Induk",
-          client: "PT PLN (Persero) P3BS UPT Pemasang Sunter",
-          year: 2017
-        },
-        // 2018
-        {
-          id: 8,
-          name: "Pengadaan dan Pemasangan Recloser 20 kV Area Pekanbaru",
-          field: "Distribusi / Jaringan Tegangan Menengah",
-          client: "PT PLN (Persero) Sektor Kep Riau",
-          year: 2018
-        },
-        {
-          id: 9,
-          name: "Pengadaan dan Pemasangan Recloser 20 kV Area Dumai",
-          field: "Distribusi / Jaringan Tegangan Menengah",
-          client: "PT PLN (Persero) WRKN APJ Riau",
-          year: 2018
-        },
-        {
-          id: 10,
-          name: "Pengadaan dan Periodiik Inspection dan Rebaltiit Bearing Turbin 62 PLTU TBK",
-          field: "Pembangkit / PLTU",
-          client: "PT PLN (Persero) Unit Pelayanan UBK",
-          year: 2018
-        },
-        {
-          id: 11,
-          name: "Pengadaan Mechanical Seal Pompa Air Utama Tenaga Surya",
-          field: "Pembangkit / Energi Baru Terbarukan",
-          client: "Dinas Perhubungan Kabupaten Kubar",
-          year: 2018
-        },
-        // 2019
-        {
-          id: 12,
-          name: "Pengadaan dan Pemasangan Genset 150 KVA",
-          field: "Pembangkit / Tenaga Diesel",
-          client: "PT PLN (Persero) Area Batam",
-          year: 2019
-        },
-        {
-          id: 13,
-          name: "Pembangunan Pembangkit Listrik Tenaga Surya (PLTS) 50 KWP",
-          field: "Pembangkit / Energi Baru Terbarukan",
-          client: "Pemerintah Kabupaten Natuna",
-          year: 2019
-        },
-        {
-          id: 14,
-          name: "Pengadaan dan Instalasi Panel LVMDP 1600A",
-          field: "Distribusi / Jaringan Tegangan Rendah",
-          client: "PT Pertamina Hulu Energi",
-          year: 2019
-        },
-      ]
+      // GANTI: Panggil server action
+      const data: Project[] = await getProjects()
+
+      // HAPUS: Data dummy
+      // const dummyData = [...]
       
-      // Group projects by year
-      const groupedByYear = groupProjectsByYear(dummyData)
+      if (!data) {
+        throw new Error("Data tidak ditemukan.");
+      }
+
+      // Logika grouping tetap sama
+      const groupedByYear = groupProjectsByYear(data)
       setProjects(groupedByYear)
-      setError(null)
+
     } catch (err) {
       console.error('Error fetching projects:', err)
-      setError(err.message)
+      setError(err instanceof Error ? err.message : 'Gagal mengambil data')
     } finally {
       setLoading(false)
     }
@@ -160,7 +65,8 @@ const PengalamanPekerjaan = () => {
       grouped[year].push(project)
     })
     
-    // Convert to array and sort by year descending
+    // Convert to array. 
+    // Pengurutan sudah dilakukan di server action, tapi kita pastikan lagi.
     return Object.keys(grouped)
       .sort((a, b) => Number(b) - Number(a))
       .map(year => ({
@@ -233,7 +139,7 @@ const PengalamanPekerjaan = () => {
         {/* Projects by Year */}
         {projects.length === 0 ? (
           <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 text-center">
-            <p className="text-white/70">Tidak ada data proyek</p>
+            <p className="text-white/70">Tidak ada data proyek yang ditemukan.</p>
           </div>
         ) : (
           projects.map(({ year, projects: yearProjects }) => (
@@ -255,17 +161,17 @@ const PengalamanPekerjaan = () => {
                     {/* Project Name */}
                     <div className="text-white/90">
                       <span className="text-yellow-400 mr-2">•</span>
-                      {project.name || project.projectName}
+                      {project.name}
                     </div>
 
                     {/* Field/Category */}
                     <div className="text-white/80 text-sm md:text-base">
-                      {project.field || project.category || '-'}
+                      {project.field}
                     </div>
 
                     {/* Client */}
                     <div className="text-white/80 text-sm md:text-base">
-                      {project.client || project.customer || '-'}
+                      {project.client}
                     </div>
                   </div>
                 ))}

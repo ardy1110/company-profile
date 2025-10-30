@@ -463,7 +463,7 @@ export default function OrgChartAdmin(): React.ReactElement {
     <div className="w-full h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
       {/* Header Controls */}
       <div className="bg-slate-800 border-b border-slate-700 p-4 flex items-center justify-between flex-wrap gap-4">
-        <h1 className="text-2xl font-bold text-yellow-400">Org Chart Admin</h1>
+        <h1 className="text-2xl font-bold text-yellow-400">Kelola Struktur Organisasi</h1>
         <div className="flex items-center gap-3 flex-wrap">
           {/* ... (Search, Zoom, Refresh, Export controls - sama seperti view) ... */}
           <div className="relative">
