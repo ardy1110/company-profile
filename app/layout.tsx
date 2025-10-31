@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "PT Pelita Kencana Mandiri",
-  description: "",
+  description: "PT PELITA KENCANA MANDIRI",
   icons: {
     icon: "/logo.png",
   },
