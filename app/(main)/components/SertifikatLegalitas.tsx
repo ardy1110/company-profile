@@ -42,22 +42,10 @@ export default function SertifikasiLegalitas() {
       }
     };
     fetchCertificates();
-    
-    // --- Data Dummy untuk Preview Desain jika API tidak tersedia ---
-    // setLoading(false);
-    // setCertificates([
-    //   { id: '1', title: 'ISO 9001:2015', imageUrl: 'https://via.placeholder.com/300x400/001746/FFFFFF?text=Sertifikat+1', altText: 'Sertifikat ISO 9001', order: 1, createdAt: new Date(), updatedAt: new Date() },
-    //   { id: '2', title: 'OHSAS 18001', imageUrl: 'https://via.placeholder.com/300x400/001746/FFFFFF?text=Sertifikat+2', altText: 'Sertifikat OHSAS', order: 2, createdAt: new Date(), updatedAt: new Date() },
-    //   { id: '3', title: 'SBU Konstruksi', imageUrl: 'https://via.placeholder.com/300x400/001746/FFFFFF?text=Sertifikat+3', altText: 'Sertifikat SBU', order: 3, createdAt: new Date(), updatedAt: new Date() },
-    //   { id: '4', title: 'SIUP/NIB', imageUrl: 'https://via.placeholder.com/300x400/001746/FFFFFF?text=Legalitas+4', altText: 'Legalitas SIUP', order: 4, createdAt: new Date(), updatedAt: new Date() },
-    //   { id: '5', title: 'TDP/NIB', imageUrl: 'https://via.placeholder.com/300x400/001746/FFFFFF?text=Legalitas+5', altText: 'Legalitas TDP', order: 5, createdAt: new Date(), updatedAt: new Date() },
-    // ]);
-    // -----------------------------------------------------------------
 
   }, []);
 
-  // Warna Primer: #001746 (Biru Tua/Navy)
-  // Warna Aksen: yellow-500 (Emas/Kuning)
+
 
   if (loading) {
     return (
@@ -132,10 +120,7 @@ export default function SertifikasiLegalitas() {
                       unoptimized
                     />
                     {/* Overlay on hover */}
-                    <div className="absolute inset-0 bg-yellow-500/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center cursor-pointer">
-                      <span className="text-[#001746] text-xl font-extrabold tracking-wide">
-                        LIHAT DETAIL
-                      </span>
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center cursor-pointer">
                     </div>
                   </div>
                 </div>
