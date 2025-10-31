@@ -1,16 +1,17 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import dynamic from 'next/dynamic'
- 
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
+import { logoutUser } from "@/lib/authActions";
+
 // Gunakan dynamic import dengan ssr: false
 const OrgChartAdmin = dynamic(
-  () => import('@/app/admin/components/OrgEmployed'), // <-- Sesuaikan path ke file OrgChartAdmin Anda
-  { 
+  () => import("@/app/admin/components/OrgEmployed"), // <-- Sesuaikan path ke file OrgChartAdmin Anda
+  {
     ssr: false, // <-- Ini adalah kuncinya!
-    loading: () => <p>Loading chart admin...</p> // Opsional: Tampilkan sesuatu saat komponen dimuat
+    loading: () => <p>Loading chart admin...</p>, // Opsional: Tampilkan sesuatu saat komponen dimuat
   }
-)
+);
 import {
   Menu,
   X,
@@ -18,17 +19,12 @@ import {
   Award,
   Briefcase,
   LogOut,
-  Settings,
-  Bell
-} from 'lucide-react';
-import AdminPengalamanPekerjaan from './components/ProjectManagement';
-import AdminSertifikasiLegalitas from './components/Certificate';
+  Bell,
+} from "lucide-react";
+import AdminPengalamanPekerjaan from "./components/ProjectManagement";
+import AdminSertifikasiLegalitas from "./components/Certificate";
 
-
-
-type MenuItem = 'dashboard' | 'organization' | 'certificates' | 'projects';
-
-
+type MenuItem = "dashboard" | "organization" | "certificates" | "projects";
 
 // Components
 const Sidebar: React.FC<{
@@ -37,12 +33,25 @@ const Sidebar: React.FC<{
   activeMenu: MenuItem;
   setActiveMenu: (menu: MenuItem) => void;
 }> = ({ isOpen, onClose, activeMenu, setActiveMenu }) => {
-  const menuItems: { id: MenuItem; label: string; icon: React.ReactElement }[] = [
-    { id: 'organization', label: 'Struktur Organisasi', icon: <Users size={20} /> },
-    { id: 'certificates', label: 'Kelola Sertifikat', icon: <Award size={20} /> },
-    { id: 'projects', label: 'Kelola Proyek', icon: <Briefcase size={20} /> },
-  ];
+  const menuItems: { id: MenuItem; label: string; icon: React.ReactElement }[] =
+    [
+      {
+        id: "organization",
+        label: "Struktur Organisasi",
+        icon: <Users size={20} />,
+      },
+      {
+        id: "certificates",
+        label: "Kelola Sertifikat",
+        icon: <Award size={20} />,
+      },
+      { id: "projects", label: "Kelola Proyek", icon: <Briefcase size={20} /> },
+    ];
 
+  const handleLogout = async () => {
+    await logoutUser();
+    window.location.href = "/login"; // pakai window agar cookies terhapus lalu redirect clean
+  };
   return (
     <>
       {/* Overlay */}
@@ -58,7 +67,7 @@ const Sidebar: React.FC<{
         className={`
           fixed top-0 left-0 h-full bg-slate-900 text-white w-64 z-50
           transform transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0 lg:static
         `}
       >
@@ -81,9 +90,10 @@ const Sidebar: React.FC<{
               }}
               className={`
                 w-full flex items-center gap-3 px-6 py-3 transition-colors
-                ${activeMenu === item.id
-                  ? 'bg-yellow-400 text-slate-900 font-semibold'
-                  : 'text-gray-300 hover:bg-slate-800'
+                ${
+                  activeMenu === item.id
+                    ? "bg-yellow-400 text-slate-900 font-semibold"
+                    : "text-gray-300 hover:bg-slate-800"
                 }
               `}
             >
@@ -95,11 +105,10 @@ const Sidebar: React.FC<{
 
         {/* Footer */}
         <div className="absolute bottom-0 w-full border-t border-slate-700">
-          <button className="w-full flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-slate-800 transition-colors">
-            <Settings size={20} />
-            <span>Pengaturan</span>
-          </button>
-          <button className="w-full flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-slate-800 transition-colors">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-6 py-4 text-gray-300 hover:bg-slate-800 transition-colors"
+          >
             <LogOut size={20} />
             <span>Keluar</span>
           </button>
@@ -109,20 +118,18 @@ const Sidebar: React.FC<{
   );
 };
 
-
 const OrganizationView: React.FC = () => {
   return (
     <div className="space-y-6">
-      <OrgChartAdmin/>
+      <OrgChartAdmin />
     </div>
   );
 };
 
 const CertificatesView: React.FC = () => {
-
   return (
     <div className="space-y-6">
-      <AdminSertifikasiLegalitas/>
+      <AdminSertifikasiLegalitas />
     </div>
   );
 };
@@ -130,7 +137,7 @@ const CertificatesView: React.FC = () => {
 const ProjectsView: React.FC = () => {
   return (
     <div className="space-y-6">
-      <AdminPengalamanPekerjaan/>
+      <AdminPengalamanPekerjaan />
     </div>
   );
 };
@@ -138,15 +145,15 @@ const ProjectsView: React.FC = () => {
 // Main Component
 export default function AdminDashboard(): React.ReactElement {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<MenuItem>('organization');
+  const [activeMenu, setActiveMenu] = useState<MenuItem>("organization");
 
   const renderContent = () => {
     switch (activeMenu) {
-      case 'organization':
+      case "organization":
         return <OrganizationView />;
-      case 'certificates':
+      case "certificates":
         return <CertificatesView />;
-      case 'projects':
+      case "projects":
         return <ProjectsView />;
       default:
         return <OrganizationView />;
@@ -156,7 +163,7 @@ export default function AdminDashboard(): React.ReactElement {
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar
-        isOpen={sidebarOpen} 
+        isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         activeMenu={activeMenu}
         setActiveMenu={setActiveMenu}
@@ -190,9 +197,7 @@ export default function AdminDashboard(): React.ReactElement {
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-6">
-          {renderContent()}
-        </main>
+        <main className="flex-1 overflow-y-auto p-6">{renderContent()}</main>
       </div>
     </div>
   );
