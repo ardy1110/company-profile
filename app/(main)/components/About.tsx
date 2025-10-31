@@ -1,5 +1,4 @@
 // src/app/about/page.tsx
-import Image from "next/image";
 import React from 'react'; // Tambahkan import React
 
 // Komponen Card Pimpinan (Opsional, untuk visual yang lebih baik)
@@ -84,14 +83,6 @@ export default function About() {
 
       {/* Banner Section - Dibuat Lebih Berdampak dan Kontras */}
       <section className="relative w-full h-[450px] overflow-hidden">
-        {/* Background Image (pastikan path "/tower.jpg" benar di Next.js public folder) */}
-        <Image
-          src="/tower.jpg"
-          alt="Proyek Konstruksi PT Pelita Kencana Mandiri"
-          fill
-          className="object-cover"
-          quality={100}
-        />
 
         {/* Overlay Biru Tua yang Kontras */}
         <div className="absolute inset-0 bg-[#001746]/90"></div>
