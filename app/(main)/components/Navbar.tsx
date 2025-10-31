@@ -33,6 +33,11 @@ const mobileMenuItems = [
     href: "/project-experience",
     description: "",
   },
+  {
+    title: "Implementasi HSE",
+    href: "/implementasi-hse",
+    description: "",
+  },
 ];
 
 // Komponen ListItem (Disesuaikan untuk Mobile Sidebar)

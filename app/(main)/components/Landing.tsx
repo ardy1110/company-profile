@@ -20,7 +20,7 @@ const Landing = () => {
           }}
         ></div>
 
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 bg-black opacity-10"></div>
 
         {/* Overlay */}
         <div className="absolute top-0 left-0 w-full h-1/2 bg-[#001746]/90 [clip-path:polygon(0_0,100%_0,100%_50%,0_100%)]"></div>
