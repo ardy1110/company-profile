@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  serverActions: {
+    bodySizeLimit: "2mb", // bisa sesuaikan 5mb, 20mb, dll.
+  },
 };
 
 export default nextConfig;
