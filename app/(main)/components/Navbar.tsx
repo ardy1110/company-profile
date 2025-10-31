@@ -33,7 +33,6 @@ const mobileMenuItems = [
     href: "/project-experience",
     description: "",
   },
-  { title: "Hubungi Kami", href: "#footer", description: "" },
 ];
 
 // Komponen ListItem (Disesuaikan untuk Mobile Sidebar)
@@ -301,7 +300,7 @@ const Navbar = () => {
 
             {/* Tombol Hubungi Kami (Aksen) */}
             <Link
-              href="/contact"
+              href="#footer"
               className="block mt-6 mx-4 w-auto text-center p-3 rounded-md bg-yellow-500 text-[#001746] font-bold hover:bg-yellow-400 transition"
               onClick={closeMobileMenu}
             >
