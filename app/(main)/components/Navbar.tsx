@@ -19,7 +19,7 @@ import { Menu, X, ChevronRight } from "lucide-react";
 // --- Data Menu Mobile (Disederhanakan untuk Sidebar) ---
 const mobileMenuItems = [
   { title: "Home", href: "#home", description: "" },
-  { title: "Tentang Kami", href: "/about", description: "" },
+  { title: "Tentang Kami", href: "#about", description: "" },
   { title: "Visi dan Misi", href: "#visi-misi", description: "" },
   { title: "Layanan Kami", href: "#layanan-kami", description: "" },
   { title: "Komitmen Lingkungan", href: "#lingkungan", description: "" },
@@ -33,7 +33,7 @@ const mobileMenuItems = [
     href: "/project-experience",
     description: "",
   },
-  { title: "Hubungi Kami", href: "/contact", description: "" },
+  { title: "Hubungi Kami", href: "#footer", description: "" },
 ];
 
 // Komponen ListItem (Disesuaikan untuk Mobile Sidebar)

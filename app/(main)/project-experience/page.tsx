@@ -145,13 +145,13 @@ useEffect(() => {
                 {yearProjects.map((project, index) => (
                   <div 
                     key={project.id || index}
-                    className={`px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-4 hover:bg-white/10 transition-colors ${
+                    className={`px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-9 hover:bg-white/10 transition-colors ${
                       index !== yearProjects.length - 1 ? 'border-b border-white/10' : ''
                     }`}
                   >
                     {/* Project Name */}
                     <div className="text-white/90">
-                      <span className="text-yellow-400 mr-2">•</span>
+                      {/* <span className="text-yellow-400 mr-2">•</span> */}
                       {project.name}
                     </div>
 
