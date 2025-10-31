@@ -1,8 +1,11 @@
-'use client'
+"use client";
 
-import OrganizationChart from './components/OrgChart'
+import dynamic from "next/dynamic";
 
-
+const OrganizationChart = dynamic(
+  () => import("./components/OrgChart"),
+  { ssr: false }
+);
 
 const StrukturOrganisasi = () => {
 

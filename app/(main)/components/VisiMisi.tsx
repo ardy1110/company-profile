@@ -13,7 +13,7 @@ export default function VisiMisi() {
         className="absolute inset-0 bg-cover bg-center"
         style={{
           // Menggunakan warna primer perusahaan pada gradien untuk integrasi yang lebih baik
-          backgroundImage: `linear-gradient(rgba(0, 23, 70, 0.95), rgba(0, 23, 70, 0.95)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1600&auto=format&fit=crop')`,
+          backgroundImage: `linear-gradient(rgba(0, 23, 70, 0.95), rgba(0, 23, 70, 0.95)), url('/gedung.jpeg')`,
           backgroundAttachment: 'fixed', // Efek Parallax (Opsional, tapi keren)
         }}
       />

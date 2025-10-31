@@ -45,7 +45,7 @@ export default function LoginPage() {
       {/* Background Image with Dark Overlay */}
       <div className="absolute inset-0">
         <Image
-          src="https://images.unsplash.com/photo-1581093557989-18306915b136?q=80&w=2070&auto=format&fit=crop" // Gambar konstruksi/proyek
+          src="/gedung.jpeg" // Gambar konstruksi/proyek
           alt="Latar Belakang Proyek Konstruksi"
           fill
           className="object-cover"

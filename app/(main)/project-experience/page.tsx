@@ -1,6 +1,6 @@
 'use client'
 import { getProjects } from '@/lib/projectActions'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 // Types (Sesuaikan dengan model Prisma)
 interface Project {
@@ -21,39 +21,30 @@ const PengalamanPekerjaan = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchProjects()
-  }, [])
 
-  const fetchProjects = async () => {
-    try {
-      setLoading(true)
-      setError(null) // Hapus error sebelumnya
-      
-      // HAPUS: Simulasi delay
-      // await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // GANTI: Panggil server action
-      const data: Project[] = await getProjects()
+  const fetchProjects = useCallback(async () => {
+  try {
+    setLoading(true)
+    setError(null)
 
-      // HAPUS: Data dummy
-      // const dummyData = [...]
-      
-      if (!data) {
-        throw new Error("Data tidak ditemukan.");
-      }
+    const data: Project[] = await getProjects()
 
-      // Logika grouping tetap sama
-      const groupedByYear = groupProjectsByYear(data)
-      setProjects(groupedByYear)
+    if (!data) throw new Error("Data tidak ditemukan.")
 
-    } catch (err) {
-      console.error('Error fetching projects:', err)
-      setError(err instanceof Error ? err.message : 'Gagal mengambil data')
-    } finally {
-      setLoading(false)
-    }
+    const groupedByYear = groupProjectsByYear(data)
+    setProjects(groupedByYear)
+  } catch (err) {
+    console.error('Error fetching projects:', err)
+    setError(err instanceof Error ? err.message : 'Gagal mengambil data')
+  } finally {
+    setLoading(false)
   }
+}, [])
+
+useEffect(() => {
+  fetchProjects()
+}, [fetchProjects])
+
 
   const groupProjectsByYear = (data: Project[]): GroupedProjects[] => {
     const grouped: Record<number, Project[]> = {}
@@ -111,7 +102,7 @@ const PengalamanPekerjaan = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
         style={{
-          backgroundImage: `url('/images/construction-bg.jpg')`,
+          backgroundImage: `url('/gedung.jpeg')`,
         }}
       ></div>
       

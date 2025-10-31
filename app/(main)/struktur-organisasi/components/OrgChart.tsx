@@ -3,7 +3,6 @@ import { Tree, TreeNode } from "react-organizational-chart";
 import {
   ChevronDown,
   ChevronUp,
-  Download,
   Search,
   ZoomIn,
   ZoomOut,
@@ -223,11 +222,6 @@ export default function OrganizationChart(): React.ReactElement {
     }
   };
 
-  const exportChart = (): void => {
-    alert(
-      "Fitur export akan menggunakan html2canvas atau library serupa di implementasi production"
-    );
-  };
 
   // Loading state
   if (loading) {
@@ -363,14 +357,6 @@ export default function OrganizationChart(): React.ReactElement {
             <RefreshCw className="w-5 h-5 text-gray-300" />
           </button>
 
-          {/* Export */}
-          <button
-            onClick={exportChart}
-            className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-slate-900 rounded-lg hover:bg-yellow-500 transition-colors font-medium"
-          >
-            <Download className="w-4 h-4" />
-            Export
-          </button>
         </div>
       </div>
 
